@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-
 import { Injectable } from '@nestjs/common';
 import {
   ValidationArguments,
@@ -24,12 +23,14 @@ export class IsUniqueConstraint implements ValidatorConstraintInterface {
       .where({ [column]: value })
       .getExists();
 
+    // console.log(dataExist);
+
     return !dataExist;
   }
 
   defaultMessage(validationArguments?: ValidationArguments): string {
     // return custom field message
     const field: string = validationArguments.property;
-    return `${field} is already exist`;
+    return `Duplicate value: ${field} already exists`;
   }
 }

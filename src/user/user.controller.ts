@@ -7,6 +7,8 @@ import {
   Param,
   Put,
   Delete,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
@@ -29,7 +31,22 @@ export class UserController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.userService.create(createUserDto);
+    // try {
+    return await this.userService.create(createUserDto);
+    // } catch (error) {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.FORBIDDEN,
+    //       error: 'Failed to create User',
+    //       message: error.message,
+    //     },
+    //     HttpStatus.FORBIDDEN,
+    //     {
+    //       cause: error,
+    //     },
+    //   );
+    // }
+    // return this.userService.create(createUserDto);
   }
 
   @Put(':id')
@@ -41,7 +58,8 @@ export class UserController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<void> {
-    return this.userService.remove(parseInt(id));
+  async remove(@Param('id') id: string): Promise<string> {
+    await this.userService.remove(parseInt(id));
+    return `User with ID ${id} has been deleted successfully.`;
   }
 }

@@ -17,24 +17,29 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: number): Promise<any> {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('User not found from service');
     }
-    return user;
+    const{password, ...rest} = user;
+    return rest;
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = this.userRepository.create(createUserDto);
-    return this.userRepository.save(user);
+  async create(createUserDto: CreateUserDto): Promise<any> {
+    const user = await this.userRepository.create(createUserDto);
+    const savedUser = await this.userRepository.save(user);
+    const{password, ...rest}  = savedUser;
+    return rest;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<any> {
     const user = await this.findOne(id);
     user.username = updateUserDto.username;
     user.password = updateUserDto.password;
-    return this.userRepository.save(user);
+    const updatedUser = await this.userRepository.save(user);
+    const{password, ...rest}  = updatedUser;
+    return rest;
   }
 
   async remove(id: number): Promise<void> {

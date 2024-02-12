@@ -1,9 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { IsString, IsNotEmpty, MinLength } from 'class-validator';
-import { isUnique } from 'src/customValidation/isUniqueValidation/isUnique.decorator';
 
-export class CreateUserDto {
-  @isUnique({tableName: 'user', column: 'username'})
+export class SignInDto {
   @IsString()
   @IsNotEmpty()
   username: string;
