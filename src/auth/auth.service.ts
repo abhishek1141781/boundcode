@@ -1,10 +1,7 @@
+/* eslint-disable prettier/prettier */
 import { SignInDto } from './dto/signin-user.dto';
 import { CreateUserDto } from './../user/dto/create-user.dto';
-/* eslint-disable prettier/prettier */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
@@ -12,14 +9,11 @@ import { UserService } from 'src/user/user.service';
 @Injectable()
 export class AuthService {
   constructor(
-    // @InjectRepository(User)
-    // private readonly userRepository: Repository<User>,
     private userService: UserService,
-    // private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
 
-
-//   SIGN UP
+  //   SIGN UP
 
   async signup(createUserDto: CreateUserDto): Promise<any> {
     // Generate a salt for hashing
@@ -36,17 +30,12 @@ export class AuthService {
       password: hashedPassword, // Replace plain text password with hashed password
     });
 
-    // // Save the user to the database
-    // const savedUser = await this.userRepository.save(newUser);
-
-    return newUser
+    return newUser;
   }
 
+  //   SIGN IN
 
-  
-//   SIGN IN
-
-  async signin(signInDto: SignInDto): Promise<any> {
+  async signin(signInDto: SignInDto): Promise<{ access_token: string }> {
     // const user = await this.userRepository.findOneBy({
     const user = await this.userService.findByUsername(signInDto.username);
 
@@ -66,22 +55,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials: wrong password');
     }
 
-    // If passwords match, remove the password field from the user object before returning
-    const { password, ...result } = user;
+    // once passwords match create JWT TOKEN AND RETURN IT
 
-    // Return the user object without the password
-    return result;
+    const payload = { sub: user.id, username: user.username };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
-
-  //   async signin(createUserDto: CreateUserDto): Promise<any> {
-  //     const user = await this.userRepository.findOneBy(createUserDto);
-
-  //     if (user?.password !== createUserDto.password) {
-  //       throw new UnauthorizedException();
-  //     }
-  //     const { password, ...result } = user;
-  //     // TODO: Generate a JWT and return it here
-  //     // instead of the user object
-  //     return result;
-  //   }
 }
