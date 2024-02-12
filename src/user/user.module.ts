@@ -1,13 +1,14 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserService } from '../services/user.service';
-import { UserController } from '../controllers/user.controller';
-import { User } from '../entities/user.entity';
+import { UserService } from './user.service';
+import { UserController } from './user.controller';
+import { User } from './entities/user.entity';
+import { IsUniqueConstraint } from 'src/customValidation/isUniqueValidation/isUnique.class';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
-  providers: [UserService],
+  providers: [UserService, IsUniqueConstraint],
   controllers: [UserController],
   exports: [UserService], // Export UserService for use in other modules
 })

@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './modules/user.module';
-import { User } from './entities/user.entity';
+import { UserModule } from './user/user.module';
+import { User } from './user/entities/user.entity';
+// import { TestModule } from './test/test.module';
 // import * as ormconfig from '../ormconfig.json'; // Import ormconfig.json
 
 @Module({
@@ -14,8 +15,11 @@ import { User } from './entities/user.entity';
       username: 'postgres',
       password: 'root',
       database: 'boundcode',
-      // entities: ['dist/**/*.entity{.ts,.js}'],
+      // entities: ['dist/**/*.entity.js'],
+      // entities: ['dist/**/*.entity.{ts,js}'],
+      // entities: [__dirname + '/../**/*.entity.{js,ts}'],
       synchronize: true,
+      // autoLoadEntities: true,
       entities: [User], // Import User entity
     }),
     UserModule,
