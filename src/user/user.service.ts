@@ -22,14 +22,14 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User not found from service');
     }
-    const{password, ...rest} = user;
+    const { password, ...rest } = user;
     return rest;
   }
 
   async create(createUserDto: CreateUserDto): Promise<any> {
     const user = await this.userRepository.create(createUserDto);
     const savedUser = await this.userRepository.save(user);
-    const{password, ...rest}  = savedUser;
+    const { password, ...rest } = savedUser;
     return rest;
   }
 
@@ -38,12 +38,16 @@ export class UserService {
     user.username = updateUserDto.username;
     user.password = updateUserDto.password;
     const updatedUser = await this.userRepository.save(user);
-    const{password, ...rest}  = updatedUser;
+    const { password, ...rest } = updatedUser;
     return rest;
   }
 
   async remove(id: number): Promise<void> {
     const user = await this.findOne(id);
     await this.userRepository.remove(user);
+  }
+
+  async findByUsername(username: string): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { username } });
   }
 }

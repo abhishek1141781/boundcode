@@ -12,9 +12,9 @@ import { UserService } from 'src/user/user.service';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    // private userService: UserService,
+    // @InjectRepository(User)
+    // private readonly userRepository: Repository<User>,
+    private userService: UserService,
     // private jwtService: JwtService
   ) {}
 
@@ -30,19 +30,16 @@ export class AuthService {
     );
 
     // Create a new user with the hashed password
-    // const newUser = this.userService.create({
-    const newUser = this.userRepository.create({
+    // const newUser = this.userRepository.create({
+    const newUser = this.userService.create({
       ...createUserDto,
       password: hashedPassword, // Replace plain text password with hashed password
     });
 
-    // Save the user to the database
-    const savedUser = await this.userRepository.save(newUser);
+    // // Save the user to the database
+    // const savedUser = await this.userRepository.save(newUser);
 
-    // Remove the password from the user object before returning
-    // const { password, ...userWithoutPassword } = newUser;
-    const { password, ...userWithoutPassword } = savedUser;
-    return userWithoutPassword;
+    return newUser
   }
 
 
@@ -50,9 +47,8 @@ export class AuthService {
 //   SIGN IN
 
   async signin(signInDto: SignInDto): Promise<any> {
-    const user = await this.userRepository.findOneBy({
-      username: signInDto.username,
-    });
+    // const user = await this.userRepository.findOneBy({
+    const user = await this.userService.findByUsername(signInDto.username);
 
     if (!user) {
       throw new UnauthorizedException(
