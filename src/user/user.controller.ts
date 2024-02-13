@@ -7,18 +7,18 @@ import {
   Param,
   Put,
   Delete,
-  HttpException,
-  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { Public } from 'src/customValidation/isPublic/isPublic.decorator';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Public()
   @Get()
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
